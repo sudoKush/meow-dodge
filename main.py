@@ -3,26 +3,77 @@ import settings.settings as set
 
 pygame.init()
 
+# utility functions
+def image(sheet, width, height, scale):
+    image = pygame.image.load(sheet) 
+    image = pygame.transform.scale(image, (width * scale, height * scale))
+    return image
+
+def image_flip(image, x=False, y=False):
+    image = pygame.transform.flip(image, x, y)
+    return image
+
+def pos(image, pos_x, pos_y):
+    pos = image.get_rect(center=(pos_x, pos_y))
+    return pos
+
+
 screen = pygame.display.set_mode((set.screen_width, set.screen_height))
 pygame.display.set_caption("Meow Dodge")
 
 clock = pygame.time.Clock()
 
-playing = True
+# sprites
+cat = image('./assets/animals/cat/cat_idle.png', 27, 16, 8)
+initial_cat = image_flip(cat, False, False)
+flipped_cat = image_flip(cat, True, False)
 
-# Colors
+velocity = 8
+cat_pos = pos(cat, set.screen_width // 2, set.screen_height // 2) 
+
+# colors
 gray = (50, 50, 50)
+
+playing = True
 
 while playing:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             playing = False
 
+    keys = pygame.key.get_pressed()
+
+    print(pygame.mouse.get_pos())
+
+    w = keys[pygame.K_w]
+    a = keys[pygame.K_a]
+    s = keys[pygame.K_s]
+    d = keys[pygame.K_d]
+
+    print(f'W:{w}, A:{a}, S:{s}, D:{d}')
+
+    if w:
+        cat_pos.y -= velocity
+
+    if a:
+        cat = flipped_cat
+        cat_pos.x -= velocity
+
+    if s:
+        cat_pos.y += velocity
+
+    if d:
+        cat = initial_cat 
+        cat_pos.x += velocity
+
+    if w and a or w and d or s and a or s and d:
+        velocity = 6
+    else: 
+        velocity = 8
+
     screen.fill(gray)
+    screen.blit(cat, cat_pos)
 
     pygame.display.update()
     clock.tick(set.fps)
 pygame.quit()
-
-
-
