@@ -43,30 +43,26 @@ while playing:
 
     keys = pygame.key.get_pressed()
 
-    print(pygame.mouse.get_pos())
+    w_key = keys[pygame.K_w]
+    a_key = keys[pygame.K_a]
+    s_key = keys[pygame.K_s]
+    d_key = keys[pygame.K_d]
 
-    w = keys[pygame.K_w]
-    a = keys[pygame.K_a]
-    s = keys[pygame.K_s]
-    d = keys[pygame.K_d]
-
-    print(f'W:{w}, A:{a}, S:{s}, D:{d}')
-
-    if w:
+    if w_key:
         cat_pos.y -= velocity
 
-    if a:
+    if a_key:
         cat = flipped_cat
         cat_pos.x -= velocity
 
-    if s:
+    if s_key:
         cat_pos.y += velocity
 
-    if d:
+    if d_key:
         cat = initial_cat 
         cat_pos.x += velocity
 
-    if w and a or w and d or s and a or s and d:
+    if w_key and a_key or w_key and d_key or s_key and a_key or s_key and d_key:
         velocity = 6
     else: 
         velocity = 8
