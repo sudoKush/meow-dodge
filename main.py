@@ -42,7 +42,6 @@ while playing:
             playing = False
 
     keys = pygame.key.get_pressed()
-
     w_key = keys[pygame.K_w]
     a_key = keys[pygame.K_a]
     s_key = keys[pygame.K_s]
@@ -50,17 +49,25 @@ while playing:
 
     if w_key:
         cat_pos.y -= velocity
+        if cat_pos.y < 0: # prevent going above the screen
+            cat_pos.y = 0
 
     if a_key:
         cat = flipped_cat
         cat_pos.x -= velocity
+        if cat_pos.x < 0: # prevent going off left 
+            cat_pos.x = 0
 
     if s_key:
         cat_pos.y += velocity
+        if cat_pos.bottom > set.screen_height: # prevent going off bottom
+            cat_pos.bottom = set.screen_height
 
     if d_key:
-        cat = initial_cat 
+        cat = initial_cat
         cat_pos.x += velocity
+        if cat_pos.right > set.screen_width: # prevent going off right 
+            cat_pos.right = set.screen_width
 
     if w_key and a_key or w_key and d_key or s_key and a_key or s_key and d_key:
         velocity = 6
