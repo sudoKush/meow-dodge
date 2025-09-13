@@ -13,9 +13,8 @@ def image_flip(image, x=False, y=False):
     image = pygame.transform.flip(image, x, y)
     return image
 
-def pos(image, pos_x, pos_y):
-    pos = image.get_rect(center=(pos_x, pos_y))
-    return pos
+def pos(image, **pos):
+    return image.get_rect(**pos) 
 
 
 screen = pygame.display.set_mode((set.screen_width, set.screen_height))
@@ -24,13 +23,27 @@ pygame.display.set_caption("Meow Dodge")
 clock = pygame.time.Clock()
 
 # sprites
-cat = image('./assets/animals/cat/cat_idle.png', 27, 16, 8)
+cat = image('./assets/animals/cat/cat_idle.png', 27, 16, 4)
 initial_cat = image_flip(cat, False, False)
 flipped_cat = image_flip(cat, True, False)
 
-velocity = 8
-cat_pos = pos(cat, set.screen_width // 2, set.screen_height // 2) 
+jump = -20
 
+ground_level = 595
+x_velocity = 8
+y_velocity = 0
+cat_pos = pos(cat, midbottom=(set.screen_width // 2, ground_level))
+
+background = image('./assets/backgrounds/background.png', 1280, 720, 1)
+background_pos = pos(background, center=(set.screen_width//2, set.screen_height//2)) 
+
+heart_1 = image('./assets/ui/health/heart.png', 32, 32, 1).convert_alpha()
+heart_2 = image('./assets/ui/health/heart.png', 32, 32, 1).convert_alpha()
+heart_3 = image('./assets/ui/health/heart.png', 32, 32, 1).convert_alpha()
+heart_pos_1 = pos(heart_1, topleft=(set.screen_width - 150, 30))
+heart_pos_2 = pos(heart_2, topleft=(set.screen_width - 100, 30))
+heart_pos_3 = pos(heart_3, topleft=(set.screen_width - 50, 30))
+ 
 # colors
 gray = (50, 50, 50)
 
@@ -40,41 +53,36 @@ while playing:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             playing = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and cat_pos.bottom == ground_level:
+                y_velocity = jump 
+    key = pygame.key.get_pressed()
 
-    keys = pygame.key.get_pressed()
-    w_key = keys[pygame.K_w]
-    a_key = keys[pygame.K_a]
-    s_key = keys[pygame.K_s]
-    d_key = keys[pygame.K_d]
-
-    if w_key:
-        cat_pos.y -= velocity
-        if cat_pos.y < 0: # prevent going above the screen
-            cat_pos.y = 0
-
-    if a_key:
+    if key[pygame.K_a]:
+        cat_pos.x -= x_velocity
         cat = flipped_cat
-        cat_pos.x -= velocity
-        if cat_pos.x < 0: # prevent going off left 
-            cat_pos.x = 0
+        if cat_pos.left < 0:
+            cat_pos.left = 0
 
-    if s_key:
-        cat_pos.y += velocity
-        if cat_pos.bottom > set.screen_height: # prevent going off bottom
-            cat_pos.bottom = set.screen_height
-
-    if d_key:
+    if key[pygame.K_d]:
+        cat_pos.x += x_velocity
         cat = initial_cat
-        cat_pos.x += velocity
-        if cat_pos.right > set.screen_width: # prevent going off right 
+        if cat_pos.right > set.screen_width:
             cat_pos.right = set.screen_width
 
-    if w_key and a_key or w_key and d_key or s_key and a_key or s_key and d_key:
-        velocity = 6
-    else: 
-        velocity = 8
+    y_velocity += 1
+    cat_pos.y += y_velocity
+    if cat_pos.bottom > ground_level:
+        cat_pos.bottom = ground_level
+
+
+    current_time = pygame.time.get_ticks()
 
     screen.fill(gray)
+    screen.blit(background, background_pos)
+    screen.blit(heart_1, heart_pos_1)
+    screen.blit(heart_2, heart_pos_2)
+    screen.blit(heart_3, heart_pos_3)
     screen.blit(cat, cat_pos)
 
     pygame.display.update()
