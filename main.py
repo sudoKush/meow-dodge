@@ -58,13 +58,13 @@ while playing:
                 y_velocity = jump 
     key = pygame.key.get_pressed()
 
-    if key[pygame.K_a]:
+    if key[pygame.K_a] or key[pygame.K_LEFT]:
         cat_pos.x -= x_velocity
         cat = flipped_cat
         if cat_pos.left < 0:
             cat_pos.left = 0
 
-    if key[pygame.K_d]:
+    if key[pygame.K_d] or key[pygame.K_RIGHT]:
         cat_pos.x += x_velocity
         cat = initial_cat
         if cat_pos.right > set.screen_width:
